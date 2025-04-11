@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Socket.IO Chat</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        padding: 20px;
+      }
+      #chat {
+        margin-top: 20px;
+      }
+      #messages {
+        list-style: none;
+        padding: 0;
+      }
+      #messages li {
+        padding: 5px 10px;
+        background: #f1f1f1;
+        margin-bottom: 5px;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>💬 Real-Time Chat</h2>
+    <input id="messageInput" placeholder="Type your message..." />
+    <button onclick="sendMessage()">Send</button>
+
+    <div id="chat">
+      <ul id="messages"></ul>
+    </div>
+
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+    <script>
+      // Connect to your server
+      const socket = io('http://localhost:3000');
+
+      const messageInput = document.getElementById('messageInput');
+      const messagesList = document.getElementById('messages');
+
+      // Send message to server
+      function sendMessage() {
+        const msg = messageInput.value.trim();
+        if (msg) {
+          addMessage('You: ' + msg);
+          socket.emit('message', msg);
+          messageInput.value = '';
+        }
+      }
+
+      // Receive message from server
+      socket.on('message', (data) => {
+        addMessage('Stranger: ' + data);
+      });
+
+      function addMessage(msg) {
+        const li = document.createElement('li');
+        li.innerText = msg;
+        messagesList.appendChild(li);
+      }
+    </script>
+  </body>
+</html>
